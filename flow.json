@@ -1,0 +1,1984 @@
+{
+  "name": "flow",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": "={{ [\"message\", \"callback_query\"] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -5936,
+        1456
+      ],
+      "id": "f729532a-d481-4296-86c1-b03f2bb81c53",
+      "name": "Telegram Trigger",
+      "webhookId": "80a354c3-9577-431d-9b6a-693bc37f93f9",
+      "alwaysOutputData": false,
+      "executeOnce": false,
+      "retryOnFail": false,
+      "notesInFlow": false,
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage",
+        "chatId": "={{ $('TG UserData').item.json.callback_query.message.chat.id }}",
+        "messageId": "={{ $('TG UserData').item.json.callback_query.message.message_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -4304,
+        96
+      ],
+      "id": "d3eca841-b21c-43e7-90de-34716cb7967b",
+      "name": "Delete a chat message1",
+      "webhookId": "ac3628a0-0eba-4ca5-917a-4708c91032f7",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "users",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chat_id",
+              "condition": "eq",
+              "keyValue": "={{ $('TG UserData').item.json.tg_chat_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "state",
+              "fieldValue": "set_name"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -3664,
+        528
+      ],
+      "id": "b6c6987f-0493-447a-9587-e7fc72a21866",
+      "name": "State: set_name",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "o9i44NahnJNRp0WF",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('TG UserData').item.json.tg_chat_id }}",
+        "text": "Пожалуйста введи свое имя, чтобы я знал как к тебе обращаться во время медитаций.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3488,
+        528
+      ],
+      "id": "67dfb464-a5fd-4fa5-be1e-105d3cfdb89b",
+      "name": "введи свое имя",
+      "webhookId": "ac1c88cd-afd1-4531-a4d0-4d0082f44d21",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('TG UserData').item.json.tg_chat_id }}",
+        "text": "={{ $('DBUserData').item.json.name !== null ? $('DBUserData').item.json.name+' ' : $json.telegram_first_name ? $json.telegram_first_name+' ' : ''}}Высший Разум приветствует тебя!",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Начать медитацию",
+                    "additionalFields": {
+                      "callback_data": "start_meditation"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -4512,
+        928
+      ],
+      "id": "1ffc460a-cde4-45d9-a71c-11b71bf8f1ff",
+      "name": "Высший Разум приветствует",
+      "webhookId": "dae69fe9-fd7e-46ac-910c-b40909feb63e",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "74e016c1-fa61-493a-9d75-63462e5565b3",
+              "leftValue": "={{ $('TG UserData').item.json.callback_query }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4864,
+        1456
+      ],
+      "id": "709711fd-55a1-41db-bcb0-548ff8ae88fb",
+      "name": "callback?"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('TG UserData').item.json.callback_query.data }}",
+                    "rightValue": "start_meditation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "315c9a35-afcb-4360-b3bc-be73b6e9fd5f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "start_meditation"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c4f8722f-90a8-48a0-9014-f8293098490a",
+                    "leftValue": "={{ $('TG UserData').item.json.callback_query.data }}",
+                    "rightValue": "change_name",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "change_name"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "44e0fc18-a654-49dd-8af8-2817e2d3906a",
+                    "leftValue": "={{ $('TG UserData').item.json.callback_query.data }}",
+                    "rightValue": "want_meditation",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "want_meditation"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -4512,
+        464
+      ],
+      "id": "73d95d81-65ab-4b3d-9c35-7fbbe3770792",
+      "name": "callback type"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('TG UserData').item.json.message.text }}",
+                    "rightValue": "/start",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "ae9cb291-b455-466f-92db-f7d33220160e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/start"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "975d923c-6c0e-4c8d-88d3-19451ec4cb82",
+                    "leftValue": "={{ $('TG UserData').item.json.message.text }}",
+                    "rightValue": "/set_name",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "/set_name"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -4688,
+        1456
+      ],
+      "id": "b9ae46d8-763e-495e-8775-9e9fcc4d8459",
+      "name": "message_type"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "90655084-864e-450c-90a1-d9a5f21f9b44",
+              "name": "callback_query",
+              "value": "={{ $json.callback_query }}",
+              "type": "object"
+            },
+            {
+              "id": "9f9fd267-9ae6-4db0-9217-0d8222ca1273",
+              "name": "message",
+              "value": "={{ $json.message }}",
+              "type": "object"
+            },
+            {
+              "id": "d4e622d4-c3f0-47b7-97bf-ef5ae2b02f66",
+              "name": "tg_chat_id",
+              "value": "={{ $json.callback_query ? $json.callback_query.message.chat.id : $json.message.chat.id }}",
+              "type": "string"
+            },
+            {
+              "id": "5fae520a-149d-418d-842f-2b5da1c2c8e2",
+              "name": "tg_message_id",
+              "value": "={{ $json.callback_query ? $json.callback_query.message.message_id : $json.message.message_id }}",
+              "type": "string"
+            },
+            {
+              "id": "4df425da-306a-4e08-a956-eddf4159c4c4",
+              "name": "tg_name",
+              "value": "={{ $json.message.from.first_name ? $json.message.from.first_name : null }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -5760,
+        1456
+      ],
+      "id": "1535aa57-3ae6-4901-93e4-10e17937e42a",
+      "name": "TG UserData",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "72faa6bb-3fa9-4fd7-9565-8ccee18f0a74",
+              "name": "chat_id",
+              "value": "={{ $json.chat_id }}",
+              "type": "number"
+            },
+            {
+              "id": "29231bbc-7dd0-4a49-8f8b-7c28e208339f",
+              "name": "name",
+              "value": "={{ $json.name }}",
+              "type": "string"
+            },
+            {
+              "id": "5760a167-d40f-4d74-afb7-66e73e61f3f8",
+              "name": "telegram_first_name",
+              "value": "={{ $json.telegram_first_name }}",
+              "type": "string"
+            },
+            {
+              "id": "4823bd27-dffb-4b68-b344-4731aa238c11",
+              "name": "telegram_username",
+              "value": "={{ $json.telegram_username }}",
+              "type": "string"
+            },
+            {
+              "id": "63a9a3f8-1bcd-4ab7-9b18-180b42e67892",
+              "name": "state",
+              "value": "={{ $json.state }}",
+              "type": "string"
+            },
+            {
+              "id": "94517716-409b-4c94-9d50-6f63b5583e9b",
+              "name": "updated_at",
+              "value": "={{ $json.updated_at }}",
+              "type": "string"
+            },
+            {
+              "id": "d1555663-3ad6-4da1-be51-6e3587db894f",
+              "name": "created_at",
+              "value": "={{ $json.created_at }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -5120,
+        1456
+      ],
+      "id": "a49e82d1-a07e-48b2-ae81-48988754c70b",
+      "name": "DBUserData"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "users",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chat_id",
+              "keyValue": "={{ $('TG UserData').item.json.tg_chat_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -4432,
+        1504
+      ],
+      "id": "a14dc996-6a2d-4175-9e81-d5949bc1aa1b",
+      "name": "Get State",
+      "credentials": {
+        "supabaseApi": {
+          "id": "o9i44NahnJNRp0WF",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.state }}",
+                    "rightValue": "set_name",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "ef8232ed-3a6c-43cb-af1e-d1f6e317ba24"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "set_name"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "90c5b00f-48f4-4f1f-a156-d447fbf0d878",
+                    "leftValue": "={{ $json.state }}",
+                    "rightValue": "set_problem",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "=set_problem"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        -4272,
+        1504
+      ],
+      "id": "cf3916c5-f08d-424d-becd-e5ac41199c9c",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage",
+        "chatId": "={{ $('TG UserData').item.json.message.chat.id }}",
+        "messageId": "={{ $('TG UserData').item.json.message.message_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -4128,
+        1344
+      ],
+      "id": "5c51d67b-888f-4adf-9704-e09125330960",
+      "name": "Delete a chat message",
+      "webhookId": "ac3628a0-0eba-4ca5-917a-4708c91032f7",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "3bc1cd8a-530f-46d2-89d8-9a596eac3b4f",
+              "leftValue": "={{ $('TG UserData').item.json.message.text }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "d94752ff-db04-4976-99a6-158613bc1b29",
+              "leftValue": "={{ $('TG UserData').item.json.message.text.length > 2 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4048,
+        1504
+      ],
+      "id": "5d8459d8-b5c5-42e1-855c-69d84255a1b3",
+      "name": "Имя не пустое"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('TG UserData').item.json.tg_chat_id }}",
+        "text": "=В медитации я буду обращаться к тебе по имени:\n\n\"{{ $('TG UserData').item.json.callback_query ? $('TG UserData').item.json.callback_query.from.first_name : $('TG UserData').item.json.message.text  }}\"\n\nЕсли хочешь, можешь изменить имя, нажав кнопку ниже.",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "⚙️ Изменить имя",
+                    "additionalFields": {
+                      "callback_data": "change_name"
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "▶️ Перейти к медитации",
+                    "additionalFields": {
+                      "callback_data": "start_meditation"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3696,
+        912
+      ],
+      "id": "89455bb7-10d2-478f-8ab0-de5a30b502cf",
+      "name": "я буду обращаться",
+      "webhookId": "ac1c88cd-afd1-4531-a4d0-4d0082f44d21",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "users",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chat_id",
+              "condition": "eq",
+              "keyValue": "={{ $('TG UserData').item.json.message.from.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "name",
+              "fieldValue": "={{ $('TG UserData').item.json.message.text }}"
+            },
+            {
+              "fieldId": "state",
+              "fieldValue": "={{ null }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -3888,
+        1504
+      ],
+      "id": "ccc1afdd-547a-437d-90b1-907da8e664af",
+      "name": "Update a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "o9i44NahnJNRp0WF",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('TG UserData').item.json.message.chat.id }}",
+        "text": "⛔ Введи корректное имя",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3952,
+        1664
+      ],
+      "id": "3f08002a-42fe-4ad0-ac51-7d78f84dbe3e",
+      "name": "Введи корректное",
+      "webhookId": "41019e98-e61d-41e0-84ab-a2e43c5e8c97",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -3824,
+        1664
+      ],
+      "id": "29a36658-c02e-4d4e-bc30-6e45558bb8b4",
+      "name": "Wait",
+      "webhookId": "881f4973-6b28-4b1c-aa0d-c7341da4c09e"
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage",
+        "chatId": "={{ $json.result.chat.id }}",
+        "messageId": "={{ $json.result.message_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3696,
+        1664
+      ],
+      "id": "619cdb7a-fbbf-450e-9c40-3d535681551b",
+      "name": "Delete a chat message2",
+      "webhookId": "24fe2a0b-28ff-4195-b804-c56c77bde407",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage",
+        "chatId": "={{ $('TG UserData').item.json.tg_chat_id }}",
+        "messageId": "={{ $('TG UserData').item.json.tg_message_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -4256,
+        928
+      ],
+      "id": "f957674b-c263-488e-a379-31d320dfd914",
+      "name": "Delete a chat message3",
+      "webhookId": "c229f0cf-6142-4336-b008-71ef821e7f12",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteMessage",
+        "chatId": "={{ $('TG UserData').item.json.message.chat.id }}",
+        "messageId": "={{ $('TG UserData').item.json.message.message_id }}"
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -4512,
+        736
+      ],
+      "id": "17d6bb37-093a-4ad1-a0b2-c52de9e0f927",
+      "name": "Delete a chat message4",
+      "webhookId": "ac3628a0-0eba-4ca5-917a-4708c91032f7",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a5620e26-b530-49cd-8624-2bf88136bbea",
+              "leftValue": "={{ $('TG UserData').item.json.callback_query.from.first_name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -3872,
+        528
+      ],
+      "id": "f3d80cda-04a8-45e4-87ef-1841bec0d08d",
+      "name": "Имя ТГ пусто"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "4a5a5202-16ab-480b-bf57-ac86b1a0b333",
+              "leftValue": "={{ $json.name }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4048,
+        256
+      ],
+      "id": "0b729024-8e36-4b55-b292-41ea4a863641",
+      "name": "имя задано",
+      "alwaysOutputData": false
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "tableId": "users",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chat_id",
+              "keyValue": "={{ $json.tg_chat_id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -5600,
+        1456
+      ],
+      "id": "862e2f3c-a71a-4178-a5f1-c46d6e8e8397",
+      "name": "Get a row",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "o9i44NahnJNRp0WF",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "tableId": "users",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "chat_id",
+              "fieldValue": "={{ $('TG UserData').item.json.tg_chat_id }}"
+            },
+            {
+              "fieldId": "name",
+              "fieldValue": "={{ $('TG UserData').item.json.tg_name }}"
+            },
+            {
+              "fieldId": "telegram_first_name",
+              "fieldValue": "={{ $('TG UserData').item.json.message.from.first_name }}"
+            },
+            {
+              "fieldId": "telegram_username",
+              "fieldValue": "={{ $('TG UserData').item.json.message.from.username }}"
+            },
+            {
+              "fieldId": "state",
+              "fieldValue": "={{null}}"
+            },
+            {
+              "fieldId": "created_at",
+              "fieldValue": "={{$now}}"
+            },
+            {
+              "fieldId": "updated_at",
+              "fieldValue": "={{$now}}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -5280,
+        1456
+      ],
+      "id": "ada0398b-8032-4093-b65e-33b4c373ade7",
+      "name": "Create a row",
+      "credentials": {
+        "supabaseApi": {
+          "id": "o9i44NahnJNRp0WF",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "251ce76a-eec9-49c6-b867-8fb327479913",
+              "leftValue": "={{ Object.keys($('Get a row').item.json).length > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -5440,
+        1456
+      ],
+      "id": "578645f2-2a18-4e8c-94cf-3982c777e798",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('TG UserData').item.json.callback_query.message.chat.id }}",
+        "text": "={{ $json.name }} опиши что ты хочешь от медитации. Можешь рассказать о своей проблеме которую не можешь решить или о цели к которой стремишься. Я придумаю для тебя лучшую медитацию. Можешь отправить голосовое сообщение или написать текстом.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3680,
+        240
+      ],
+      "id": "fd59a757-d57c-4105-b9ad-6b5e2a3da8b0",
+      "name": "опиши что ты хочешь",
+      "webhookId": "b20db4c4-5b64-41dd-bccd-ea32cc8eca9b",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "users",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chat_id",
+              "condition": "eq",
+              "keyValue": "={{ $('TG UserData').item.json.tg_chat_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "state",
+              "fieldValue": "set_problem"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -3872,
+        240
+      ],
+      "id": "5904e374-e395-47d5-8285-843458e26331",
+      "name": "State: set_problem",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "o9i44NahnJNRp0WF",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "Хочешь создать ещё одну медитацию? Нажми кнопку ниже 😊",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Хочу медитацию",
+                    "additionalFields": {
+                      "callback_data": "want_meditation"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {}
+      },
+      "id": "6417578c-4ed4-4269-a773-c61905b92d2c",
+      "name": "Offer New Meditation",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        -704,
+        2016
+      ],
+      "webhookId": "a5665bc7-0047-41bc-84a4-82a48d5e3b2b",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\n\n// Получаем данные от VPS\nconst { chatId, userName, goal, audioData, duration } = response;\n\nif (!audioData) {\n  throw new Error('VPS не вернул audioData');\n}\n\n// Конвертируем base64 в Buffer для n8n\nconst audioBuffer = Buffer.from(audioData, 'base64');\n\nreturn {\n  json: {\n    chatId,\n    userName,\n    goal,\n    duration\n  },\n  binary: {\n    data: {\n      data: audioBuffer,\n      mimeType: 'audio/mp3',\n      fileName: `meditation-${chatId}.mp3`\n    }\n  }\n};\n"
+      },
+      "id": "837ffa60-4ebd-419a-acdc-cbb33fdee81f",
+      "name": "Prepare Audio for Telegram",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1296,
+        2016
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "={{ $json.chatId }}",
+        "binaryData": true,
+        "additionalFields": {
+          "caption": "=✨ {{ $json.userName }}, твоя персональная медитация готова! \n\n🎯 Цель: {{ $('Code in JavaScript').item.json.text }}\n\n🎧 Найди спокойное место, надень наушники и погрузись в практику.\n\nПриятной медитации! 🧘‍♂️",
+          "title": "Персональная медитация"
+        }
+      },
+      "id": "c109d24b-a082-4a14-95f0-fc614151908c",
+      "name": "Send Audio",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -1072,
+        2016
+      ],
+      "webhookId": "edd039cc-591a-4790-8f26-2db800840e72",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=AIzaSyAuESFIrYn-k7WOYv0nFQ6wd2mHUDymwxU",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "=\n{\n  \"contents\": [{\n    \"parts\": [{\n      \"text\": {{ JSON.stringify($json.meditationText) }}\n    }]\n  }],\n  \"generationConfig\": {\n    \"responseModalities\": [\"AUDIO\"],\n    \"speechConfig\": {\n      \"voiceConfig\": {\n        \"prebuiltVoiceConfig\": {\n          \"voiceName\": \"Algieba\"\n        }\n      }\n    }\n  },\n  \"model\": \"gemini-2.5-flash-preview-tts\"\n}\n\n",
+        "options": {}
+      },
+      "id": "392c5bf8-9895-452a-b938-5a4d93b155de",
+      "name": "Google TTS Request",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1616,
+        2016
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://personal-meditations.com/api/process-base64",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"audioData\": \"{{ $json.candidates[0].content.parts[0].inlineData.data }}\",\n  \"chatId\": \"{{ $('Telegram Trigger').item.json.message.chat.id }}\",\n  \"userName\": \"{{ $('Telegram Trigger').item.json.message.from.first_name }}\",\n  \"goal\": \"{{ $('Generate Meditation Text').first().json.goal }}\"\n}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "d2839178-ee82-4803-926f-cd8b1cf4f71d",
+      "name": "VPS Audio Processor",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1456,
+        2016
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst userData = $('Prepare Meditation Prompt').first().json;\nlet meditationText = '';\n\n// OpenAI Chat Model node возвращает текст напрямую в response.content или response.text\ntry {\n  meditationText = response.content || response.text || response.message?.content || response.choices?.[0]?.message?.content || '';\n  if (!meditationText) {\n    throw new Error('Пустой ответ от OpenAI');\n  }\n} catch (e) {\n  throw new Error('Ошибка получения текста от OpenAI: ' + e.message);\n}\n\nreturn { json: { chatId: userData.chatId, userName: userData.userName, goal: userData.goal, meditationText } };"
+      },
+      "id": "c74db6a6-1762-4959-bce7-437162b012c0",
+      "name": "Extract Meditation Text",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1952,
+        2016
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const userData = {\n\n  chatId: $('Telegram Trigger').first().json.message.chat.id, \n\n  userName: $('DBUserData').first().json.name, \n\n  goal: $('Code in JavaScript').first().json.text\n\n}\n\n// Формируем промпт с подставленными значениями\n\n/*\n\nconst systemPrompt = Ты опытный мастер медитации. Создавай персонализированные тексты медитаций. Стиль: спокойный, мягкий, трансформирующий. Используй обращение на 'ты'.;\n\nconst userPrompt = `Создай текст медитации для человека по имени ${userData.userName}.\n\nЦель медитации: ${userData.goal}\n\nТребования:\n\n- КОРОТКАЯ медитация на 2-3 минуты чтения (это важно!)\n\n- Структура: краткое приветствие, быстрая релаксация, работа с целью, возвращение\n\n- Обращайся к человеку по имени ${userData.userName} 1-2 раза в тексте\n\n- Добавь паузы: [пауза 3 сек], [глубокий вдох]\n\n- На русском языке\n\n- Текст должен быть спокойным и расслабляющим\n\n- Без лишних комментариев, только текст медитации\n\n- ВАЖНО: текст должен быть компактным, не больше 400-500 слов`;\n\n*/\n\nconst systemPrompt = `Ты опытный мастер медитации. Создавай для теста 2 предложения текста медитации - мы пока тестируем код.`;\n\nconst userPrompt = `Создай текст медитации для человека по имени ${userData.userName}.\n\nЦель медитации: ${userData.goal}\n\nДлина  - 3 предложения. Обращайся к человеку по имени. \n`;\n\nreturn { \n\n  json: { \n\n    chatId: userData.chatId, \n\n    userName: userData.userName, \n\n    goal: userData.goal,\n\n    systemPrompt,\n\n    userPrompt\n\n  } \n\n};"
+      },
+      "id": "26d073e1-499f-4f93-9438-f75886ce09b8",
+      "name": "Prepare Meditation Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2464,
+        2016
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "={{ $json.systemPrompt }}",
+              "role": "system"
+            },
+            {
+              "content": "={{ $json.userPrompt }}"
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": 800,
+          "temperature": 0.8
+        }
+      },
+      "id": "cff55f8c-24ba-41ae-8fa2-baa541e37dec",
+      "name": "Generate Meditation Text",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -2256,
+        2016
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "pg28kcu3QDoYMwv2",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Отлично! Создаю твою персональную медитацию... ⏳",
+        "additionalFields": {}
+      },
+      "id": "0053f68d-9a63-41b8-bc7e-8539e75c92f8",
+      "name": "Processing Message",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        -2640,
+        2016
+      ],
+      "webhookId": "1a90f7fe-a2d7-4889-8806-ef7e0c58a833",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "Извини, но я не могу создать медитацию на эту тему 😔\n\nПопробуй описать проблему или цель, связанную с:\n• Снятием стресса или тревоги\n• Улучшением сна\n• Повышением уверенности\n• Достижением целей и мечт\n• Работой с эмоциями\n\nНапиши свою цель заново 🙏",
+        "additionalFields": {}
+      },
+      "id": "b135cfbf-f97b-492b-b4d5-ec3d3b5feccb",
+      "name": "Reject Invalid Goal",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [
+        -2640,
+        2224
+      ],
+      "webhookId": "e4b24f72-4f7a-4662-937e-5d964bdf53ac",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.message.content === 'valid'}}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "d797ebeb-e805-4b6f-8706-545ef2d3b9d8",
+      "name": "Is Goal Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -2848,
+        2128
+      ]
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4o-mini"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Ты модератор для платформы медитаций. Твоя задача - определить, является ли запрос пользователя валидной целью для медитации.\n\nВалидные цели: работа со стрессом, тревогой, сном, уверенностью, целями, мечтами, отношениями, здоровьем, эмоциями.\n\nНЕвалидные: просьбы о насилии, хулиганство, оскорбления, политика, NSFW контент.\n\nОтветь ТОЛЬКО одним словом: 'valid' или 'invalid'.\n\nПроверь запрос: {{ $json.text }}"
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": 10,
+          "temperature": 0.3
+        }
+      },
+      "id": "d30ad5cf-8cf9-4b94-94e8-b797066a3849",
+      "name": "Validate Goal",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -3312,
+        2128
+      ],
+      "credentials": {
+        "openAiApi": {
+          "id": "pg28kcu3QDoYMwv2",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const d = $input.first().json || {};\nconst style = \"Говори максимально расслабленным медленым медитативный сонным голосом с предыханием. \\n\";\nconst med = (d.meditationText ?? '').toString();\nreturn { json: { chatId: d.chatId, userName: d.userName, goal: d.goal, meditationText: style + med } };\n"
+      },
+      "id": "c7033b28-7a25-431e-af49-33767b348990",
+      "name": "Prepend TTS Style",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1776,
+        2016
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $('Telegram Trigger').item.json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -3904,
+        2032
+      ],
+      "id": "90f2467e-af41-4f2c-8635-b2678700aa78",
+      "name": "Get a file",
+      "webhookId": "454f491c-5eef-425c-9117-263099527b8b",
+      "credentials": {
+        "telegramApi": {
+          "id": "Zzgy95oZWJYgbNQh",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "operation": "transcribe",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -3744,
+        2032
+      ],
+      "id": "e749f150-2ddb-4f7c-a607-878878e655b9",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "openAiApi": {
+          "id": "pg28kcu3QDoYMwv2",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const transcribedText = $input.first().json.text;\n\n// Если нет - берем из триггера\nconst messageText = $('Telegram Trigger').first().json.message.text;\n\n// Возвращаем что нашли\nreturn {\n  text: transcribedText || messageText\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3600,
+        2128
+      ],
+      "id": "7ac455cc-34a4-4fb2-a76a-5790fd33a65c",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0c976684-5ad9-4778-b866-e53352622f5e",
+              "leftValue": "={{ $('Telegram Trigger').item.json.message.voice }}",
+              "rightValue": "",
+              "operator": {
+                "type": "object",
+                "operation": "exists",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -4080,
+        2128
+      ],
+      "id": "3403190e-1b86-4b44-9a28-ebbd24ad29f3",
+      "name": "voice/text"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "users",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "chat_id",
+              "condition": "eq",
+              "keyValue": "={{ $json.result.chat.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "state",
+              "fieldValue": "={{ null }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -896,
+        2016
+      ],
+      "id": "043de55d-98b7-494d-b1f2-6752b4ad3572",
+      "name": "State: set_name1",
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "o9i44NahnJNRp0WF",
+          "name": "Supabase account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "TG UserData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "State: set_name": {
+      "main": [
+        [
+          {
+            "node": "введи свое имя",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "callback?": {
+      "main": [
+        [
+          {
+            "node": "callback type",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "message_type",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "callback type": {
+      "main": [
+        [
+          {
+            "node": "Delete a chat message1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "имя задано",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete a chat message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "State: set_problem",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "message_type": {
+      "main": [
+        [
+          {
+            "node": "Высший Разум приветствует",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Delete a chat message4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Delete a chat message3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "TG UserData": {
+      "main": [
+        [
+          {
+            "node": "Get a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DBUserData": {
+      "main": [
+        [
+          {
+            "node": "callback?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get State": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Delete a chat message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Имя не пустое",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "voice/text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Имя не пустое": {
+      "main": [
+        [
+          {
+            "node": "Update a row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Введи корректное",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a row": {
+      "main": [
+        [
+          {
+            "node": "я буду обращаться",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Введи корректное": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Delete a chat message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a chat message3": {
+      "main": [
+        [
+          {
+            "node": "State: set_name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Имя ТГ пусто": {
+      "main": [
+        [
+          {
+            "node": "State: set_name",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "я буду обращаться",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "имя задано": {
+      "main": [
+        [
+          {
+            "node": "State: set_problem",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Имя ТГ пусто",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a row": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a row": {
+      "main": [
+        [
+          {
+            "node": "DBUserData",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "DBUserData",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "State: set_problem": {
+      "main": [
+        [
+          {
+            "node": "опиши что ты хочешь",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Audio for Telegram": {
+      "main": [
+        [
+          {
+            "node": "Send Audio",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Audio": {
+      "main": [
+        [
+          {
+            "node": "State: set_name1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google TTS Request": {
+      "main": [
+        [
+          {
+            "node": "VPS Audio Processor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VPS Audio Processor": {
+      "main": [
+        [
+          {
+            "node": "Prepare Audio for Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Meditation Text": {
+      "main": [
+        [
+          {
+            "node": "Prepend TTS Style",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Meditation Prompt": {
+      "main": [
+        [
+          {
+            "node": "Generate Meditation Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate Meditation Text": {
+      "main": [
+        [
+          {
+            "node": "Extract Meditation Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Processing Message": {
+      "main": [
+        [
+          {
+            "node": "Prepare Meditation Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Goal Valid?": {
+      "main": [
+        [
+          {
+            "node": "Processing Message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reject Invalid Goal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate Goal": {
+      "main": [
+        [
+          {
+            "node": "Is Goal Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepend TTS Style": {
+      "main": [
+        [
+          {
+            "node": "Google TTS Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Validate Goal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "voice/text": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "State: set_name1": {
+      "main": [
+        [
+          {
+            "node": "Offer New Meditation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2f1de26f-e9fa-42dd-a77b-582ddbe00125",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "90a1fa38cd35dcdda7bd24c9fa7ff0033e44737ee4549809c5328f3c277e9d07"
+  },
+  "id": "uHLmhWzh5bYhIplY",
+  "tags": []
+}

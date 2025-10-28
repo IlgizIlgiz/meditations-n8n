@@ -1,0 +1,17 @@
+{
+  "parameters": {
+    "method": "POST",
+    "url": "http://YOUR_VPS_IP:3000/process-base64",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={\n  \"audioData\": {{ JSON.stringify($json.candidates[0].content.parts[0].inlineData.data) }},\n  \"chatId\": {{ JSON.stringify($('Webhook').first().json.message.chat.id) }},\n  \"userName\": {{ JSON.stringify($('Webhook').first().json.message.from.first_name) }},\n  \"goal\": {{ JSON.stringify($('Generate Meditation Text').first().json.goal) }}\n}",
+    "options": {
+      "timeout": 60000
+    }
+  },
+  "id": "vps-audio-processor",
+  "name": "VPS Audio Processor",
+  "type": "n8n-nodes-base.httpRequest",
+  "typeVersion": 4.2,
+  "position": [1000, 300]
+}
